@@ -5,11 +5,14 @@ namespace MiniatureGit
         public static async Task AddFileToStagingArea(string filePath)
         {
             await Setup(filePath);
+
             Commit headCommit = await Repository.GetHeadCommit();
-            var fileSha = await Utils.GetSha1OfFileFromPath(filePath);
+
+            var fileSha = await Utils.GetSha1OfFileFromPathAsync(filePath);
 
             if (!headCommit.ContainsFile(filePath))
             {
+
                 Repository.StagingArea.AddFile(filePath, fileSha);
             }
             else

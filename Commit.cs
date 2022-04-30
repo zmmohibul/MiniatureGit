@@ -22,6 +22,19 @@ namespace MiniatureGit
             return FileNameFileShaDictionary.ContainsKey(fileName);
         }
 
+        public void AddFile(string fileName, string fileContentSha)
+        {
+            FileNameFileShaDictionary[fileName] = fileContentSha;
+        }
+
+        public void RemoveFile(string fileName)
+        {
+            if (ContainsFile(fileName))
+            {
+                FileNameFileShaDictionary.Remove(fileName);
+            }
+        }
+
         public string GetFileSha(string fileName)
         {
             return FileNameFileShaDictionary[fileName];

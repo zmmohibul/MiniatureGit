@@ -8,6 +8,7 @@ namespace MiniatureGit
         public static readonly DirectoryInfo Commits = new DirectoryInfo(Path.Join(MiniatureGit.FullName, "commits"));
         public static readonly DirectoryInfo Branches = new DirectoryInfo(Path.Join(MiniatureGit.FullName, "branches"));
         public static readonly string Head = Path.Join(MiniatureGit.FullName, "HEAD");
+        public static readonly string CurrentBranch = Path.Join(MiniatureGit.FullName, "CurrentBranch");
         public static readonly string Master = Path.Join(Branches.FullName, "master");
         public static readonly string StagingAreaPath = Path.Join(MiniatureGit.FullName, "StagingArea");
         public static StagingArea StagingArea;
@@ -32,14 +33,14 @@ namespace MiniatureGit
             await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
 
             await File.WriteAllTextAsync(Master, initialCommtHash);
-            await File.WriteAllTextAsync(Head, Master);
+            await File.WriteAllTextAsync(Head, initialCommtHash);
+            await File.WriteAllTextAsync(CurrentBranch, Master);
         }
 
         public static async Task<Commit> GetHeadCommit()
         {
-            var head = await File.ReadAllTextAsync(Repository.Head);
-            var headCommitSha = await File.ReadAllTextAsync(head);
-            return await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headCommitSha));
+            var headSha = await File.ReadAllTextAsync(Repository.Head);
+            return await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headSha));
         }
 
         public static async Task SetupStagingArea()
@@ -52,8 +53,38 @@ namespace MiniatureGit
             return await Utils.ReadObjectAsync<StagingArea>(StagingAreaPath);
         }
 
+        public static async Task WriteFilesInStagingArea()
+        {
+            foreach (var (file, fileContentSha) in StagingArea.FilesStagedForAddition)
+            {
+                if (!StagingArea.FilesStagedForRemoval.ContainsKey(file))
+                {
+                    var fileBytes = await File.ReadAllBytesAsync(file);
+                    var fileBytesSha = Utils.GetSha1(fileBytes);
+                    await File.WriteAllBytesAsync(Path.Join(Files.FullName, fileBytesSha), fileBytes);
+                }
+            }
+        }
+
+        public static async Task ChangeHeadPointer(string commitId)
+        {
+            await File.WriteAllTextAsync(Head, commitId);
+        }
+
+        public static async Task ChangeCurrentBranchPointer(string commitId)
+        {
+            var currentBranch = await File.ReadAllTextAsync(CurrentBranch);
+            await File.WriteAllTextAsync(currentBranch, commitId);
+        }
+
         public static async Task SaveStagingArea()
         {
+            await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
+        }
+
+        public static async Task ClearAndSaveStagingArea()
+        {
+            Repository.StagingArea.ClearStagingArea();
             await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
         }
     }

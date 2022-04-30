@@ -10,5 +10,12 @@ namespace MiniatureGit
                 Environment.Exit(1);
             }
         }
+
+        public static void FileChangedError(string filePath)
+        {
+            Console.WriteLine($"The file {filePath} has been modified since last staged or committed.");
+            Console.WriteLine("Please stage it before making commit");
+            Environment.Exit(1);
+        }
     }
 }

@@ -18,6 +18,11 @@ namespace MiniatureGit
                 Console.WriteLine("This is not an initialized MiniatureGit repository.");
                 Environment.Exit(1);
             }
+            
+            if (Directory.Exists(Repository.MiniatureGit.FullName))
+            {
+                await Repository.SetupStagingArea();
+            }
 
             if (firstArgument.Equals("init"))
             {
@@ -33,6 +38,16 @@ namespace MiniatureGit
 
                 var filePath = args[1];
                 await StageRepo.AddFileToStagingArea(filePath);
+            }
+            else if (firstArgument.Equals("commit"))
+            {
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Please enter a commit message.");
+                    Environment.Exit(1);
+                }
+
+                await CommitRepo.MakeCommit(args[1]);
             }
             else
             {

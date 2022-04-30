@@ -34,13 +34,19 @@ namespace MiniatureGit
             return objectSerialized;
         }
 
-        public static string GetSha1(string intput)
+        public static string GetSha1(string input)
         {
             using var sha1 = SHA1.Create();
-            return Convert.ToHexString(sha1.ComputeHash(UnicodeEncoding.UTF8.GetBytes(intput)));
+            return Convert.ToHexString(sha1.ComputeHash(UnicodeEncoding.UTF8.GetBytes(input)));
         }
 
-        public static async Task<string> GetSha1OfFileFromPath(string path)
+        public static string GetSha1(byte[] input)
+        {
+            using var sha1 = SHA1.Create();
+            return Convert.ToHexString(sha1.ComputeHash(input));
+        }
+
+        public static async Task<string> GetSha1OfFileFromPathAsync(string path)
         {
             if (!File.Exists(path))
             {
@@ -51,6 +57,12 @@ namespace MiniatureGit
 
             using var sha1 = SHA1.Create();
             return Convert.ToHexString(sha1.ComputeHash(fileBytes));
+        }
+
+        public static T CloneObject<T>(T source)
+        {
+            var json = JsonSerializer.Serialize<T>(source);
+            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }
