@@ -6,30 +6,21 @@ namespace MiniatureGit
         {
             await Setup(filePath);
             Commit headCommit = await Repository.GetHeadCommit();
+            var fileSha = await Utils.GetSha1OfFileFromPath(filePath);
 
-
-            try
+            if (!headCommit.ContainsFile(filePath))
             {
-                var fileSha = await Utils.GetSha1OfFileFromPath(filePath);
-
-                if (!headCommit.ContainsFile(filePath))
+                Repository.StagingArea.AddFile(filePath, fileSha);
+            }
+            else
+            {
+                var fileShaInLastCommit = headCommit.GetFileSha(filePath);
+                if (!fileShaInLastCommit.Equals(fileSha))
                 {
                     Repository.StagingArea.AddFile(filePath, fileSha);
                 }
-                else
-                {
-                    var fileShaInLastCommit = headCommit.GetFileSha(filePath);
-                    if (!fileShaInLastCommit.Equals(fileSha))
-                    {
-                       Repository.StagingArea.AddFile(filePath, fileSha);
-                    }
-                }
-                await Repository.SaveStagingArea();
             }
-            catch (System.Exception ex)
-            {
-                System.Console.WriteLine(ex);
-            }
+            await Repository.SaveStagingArea();
         }
 
         public static async Task RemoveFileFromStagingArea(string filePath)
@@ -43,7 +34,5 @@ namespace MiniatureGit
             ErrorLog.CheckNoFileExistError(filePath);
             await Repository.SetupStagingArea();
         }
-
-
     }
 }
