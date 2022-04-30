@@ -35,6 +35,13 @@ namespace MiniatureGit
             await File.WriteAllTextAsync(Head, Master);
         }
 
+        public static async Task<Commit> GetHeadCommit()
+        {
+            var head = await File.ReadAllTextAsync(Repository.Head);
+            var headCommitSha = await File.ReadAllTextAsync(head);
+            return await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headCommitSha));
+        }
+
         public static async Task SetupStagingArea()
         {
             StagingArea = await GetStagingArea();

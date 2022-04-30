@@ -4,22 +4,12 @@ namespace MiniatureGit
     {
         public static async Task AddFileToStagingArea(string filePath)
         {
-            if (!File.Exists(filePath))
-            {
-                Console.WriteLine($"No file {filePath} exists in present working directory");
-                Environment.Exit(1);
-            }
+            await Setup(filePath);
+            Commit headCommit = await Repository.GetHeadCommit();
 
-            var head = await File.ReadAllTextAsync(Repository.Head);
-            var headCommitSha = await File.ReadAllTextAsync(head);
-            
-            Commit headCommit;
-
-            await Repository.SetupStagingArea();
 
             try
             {
-                headCommit = await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headCommitSha));
                 var fileSha = await Utils.GetSha1OfFileFromPath(filePath);
 
                 if (!headCommit.ContainsFile(filePath))
@@ -40,8 +30,20 @@ namespace MiniatureGit
             {
                 System.Console.WriteLine(ex);
             }
-
-            
         }
+
+        public static async Task RemoveFileFromStagingArea(string filePath)
+        {
+            await Setup(filePath);
+            Repository.StagingArea.RemoveFile(filePath);
+        }
+
+        private static async Task Setup(string filePath)
+        {
+            ErrorLog.CheckNoFileExistError(filePath);
+            await Repository.SetupStagingArea();
+        }
+
+
     }
 }

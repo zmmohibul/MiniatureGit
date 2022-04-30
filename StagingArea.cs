@@ -16,7 +16,10 @@ namespace MiniatureGit
             FilesStagedForAddition[filePath] = fileContentSha;
         }
 
-        
+        public void RemoveFile(string filePath)
+        {
+            FilesStagedForRemoval[filePath] = string.Empty;
+        }
 
         public void ClearStagingArea()
         {
