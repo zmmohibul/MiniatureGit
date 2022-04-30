@@ -59,6 +59,16 @@ namespace MiniatureGit
 
                 await StageRepo.RemoveFileFromStagingArea(args[1]);
             }
+            else if (firstArgument.Equals("checkout"))
+            {
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Please enter a commit id to checkout.");
+                    Environment.Exit(1);
+                }
+
+                await CommitRepo.Checkout(args[1]);
+            }
             else
             {
                 Console.WriteLine($"No command '{firstArgument}' exists.");
