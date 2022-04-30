@@ -64,23 +64,8 @@ namespace MiniatureGit
 
         public static async Task Checkout(string commitIdToCheckout)
         {
-            var commits = Directory.GetFiles(Repository.Commits.FullName);
-            var commitIdToCheckoutExists = false;
-            
-            foreach(var commit in commits)
+            if (CommitWithIdExist(commitIdToCheckout))
             {
-                var currCommitId = Path.GetRelativePath(Repository.Commits.FullName, commit);
-                if (currCommitId.Equals(commitIdToCheckout))
-                {
-                    commitIdToCheckoutExists = true;
-                    break;
-                }
-            }
-
-            if (commitIdToCheckoutExists)
-            {
-                System.Console.WriteLine(commitIdToCheckout);
-
                 var commitToCheckout = await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, commitIdToCheckout));
                 ClearPWD();
                 
@@ -96,6 +81,8 @@ namespace MiniatureGit
                 Console.WriteLine($"No commit with the id {commitIdToCheckout} found.");
                 Environment.Exit(1);
             }
+
+            await File.WriteAllTextAsync(Repository.Head, commitIdToCheckout);
         }
 
         private static void ClearPWD()
@@ -123,6 +110,20 @@ namespace MiniatureGit
                     }
                 }
             }
+        }
+
+        public static bool CommitWithIdExist(string commitId)
+        {
+            var commits = Directory.GetFiles(Repository.Commits.FullName);
+            foreach(var commit in commits)
+            {
+                var currCommitId = Path.GetRelativePath(Repository.Commits.FullName, commit);
+                if (currCommitId.Equals(commitId))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

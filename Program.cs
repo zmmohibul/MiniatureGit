@@ -63,11 +63,25 @@ namespace MiniatureGit
             {
                 if (args.Length < 2)
                 {
-                    Console.WriteLine("Please enter a commit id to checkout.");
+                    Console.WriteLine("Please enter a 'commitId' or 'branch [branch name]' checkout.");
                     Environment.Exit(1);
                 }
 
-                await CommitRepo.Checkout(args[1]);
+                if (args.Length == 2)
+                {
+                    await CommitRepo.Checkout(args[1]);
+                    Environment.Exit(1);
+                }
+
+                if (args[1].Equals("branch"))
+                {
+                    await BranchRepo.Checkout(args[2]);
+                    Environment.Exit(1);
+                }
+
+                Console.WriteLine("Invalid checkout command syntax.");
+                Console.WriteLine("Please enter a 'commitId' or 'branch [branch name]' checkout.");
+                Environment.Exit(1);
             }
             else
             {
