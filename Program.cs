@@ -83,6 +83,16 @@ namespace MiniatureGit
                 Console.WriteLine("Please enter a 'commitId' or 'branch [branch name]' checkout.");
                 Environment.Exit(1);
             }
+            else if (firstArgument.Equals("branch"))
+            {
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Please enter a branch name to create new branch.");
+                    Environment.Exit(1);
+                }
+
+                await BranchRepo.CreateBranch(args[1]);
+            }
             else
             {
                 Console.WriteLine($"No command '{firstArgument}' exists.");
