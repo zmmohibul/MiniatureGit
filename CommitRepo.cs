@@ -32,12 +32,13 @@ namespace MiniatureGit
                         hasFileChanged = true;
                     }
                 }
-                else
-                {
-                    Repository.StagingArea.RemoveFile(filePath);
-                    commit.RemoveFile(filePath);
-                    hasFileChanged = true;      
-                }
+            }
+
+            foreach (var key in Repository.StagingArea.FilesStagedForRemoval.Keys)
+            {
+                commit.RemoveFile(key);
+                File.Delete(key);
+                hasFileChanged = true;
             }
 
             if (hasFileChanged)

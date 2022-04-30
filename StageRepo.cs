@@ -30,6 +30,7 @@ namespace MiniatureGit
         {
             await Setup(filePath);
             Repository.StagingArea.RemoveFile(filePath);
+            await Repository.SaveStagingArea();
         }
 
         private static async Task Setup(string filePath)

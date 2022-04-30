@@ -49,6 +49,16 @@ namespace MiniatureGit
 
                 await CommitRepo.MakeCommit(args[1]);
             }
+            else if (firstArgument.Equals("rm"))
+            {
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Please enter a file name for removing files.");
+                    Environment.Exit(1);
+                }
+
+                await StageRepo.RemoveFileFromStagingArea(args[1]);
+            }
             else
             {
                 Console.WriteLine($"No command '{firstArgument}' exists.");
