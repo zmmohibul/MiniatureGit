@@ -11,6 +11,13 @@ namespace MiniatureGit
             FilesStagedForRemoval = new Dictionary<string, string>();
         }
 
+        public void AddFile(string filePath, string fileContentSha)
+        {
+            FilesStagedForAddition[filePath] = fileContentSha;
+        }
+
+        
+
         public void ClearStagingArea()
         {
             FilesStagedForAddition = new Dictionary<string, string>();

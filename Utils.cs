@@ -6,6 +6,19 @@ namespace MiniatureGit
 {
     public class Utils
     {
+        public static async Task<T> ReadObjectAsync<T>(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException();
+            }
+
+            using FileStream openStream = File.OpenRead(path);
+            T objectToReturn = await JsonSerializer.DeserializeAsync<T>(openStream);
+            await openStream.DisposeAsync();
+            return objectToReturn;
+        }
+
         public static async Task<string> WriteObjectAndGetObjectHashAsync<T>(string path, T obj)
         {
             var objectSerialized = JsonSerializer.Serialize<T>(obj);
@@ -25,6 +38,19 @@ namespace MiniatureGit
         {
             using var sha1 = SHA1.Create();
             return Convert.ToHexString(sha1.ComputeHash(UnicodeEncoding.UTF8.GetBytes(intput)));
+        }
+
+        public static async Task<string> GetSha1OfFileFromPath(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException();
+            }
+
+            var fileBytes = await File.ReadAllBytesAsync(path);
+
+            using var sha1 = SHA1.Create();
+            return Convert.ToHexString(sha1.ComputeHash(fileBytes));
         }
     }
 }

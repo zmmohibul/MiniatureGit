@@ -17,5 +17,14 @@ namespace MiniatureGit
             FileNameFileShaDictionary = new Dictionary<string, string>();
         }
         
+        public bool ContainsFile(string fileName)
+        {
+            return FileNameFileShaDictionary.ContainsKey(fileName);
+        }
+
+        public string GetFileSha(string fileName)
+        {
+            return FileNameFileShaDictionary[fileName];
+        }
     }
 }

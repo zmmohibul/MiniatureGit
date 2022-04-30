@@ -14,6 +14,12 @@ namespace MiniatureGit
 
         public static async Task Init()
         {
+            if (Directory.Exists(MiniatureGit.FullName))
+            {
+                Console.WriteLine("This is an already initialized MiniatureGit repository.");
+                Environment.Exit(1);
+            }
+
             MiniatureGit.Create();
             Files.Create();
             Commits.Create();
@@ -27,6 +33,21 @@ namespace MiniatureGit
 
             await File.WriteAllTextAsync(Master, initialCommtHash);
             await File.WriteAllTextAsync(Head, Master);
+        }
+
+        public static async Task SetupStagingArea()
+        {
+            StagingArea = await GetStagingArea();
+        }
+
+        private static async Task<StagingArea> GetStagingArea()
+        {
+            return await Utils.ReadObjectAsync<StagingArea>(StagingAreaPath);
+        }
+
+        public static async Task SaveStagingArea()
+        {
+            await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
         }
     }
 }
