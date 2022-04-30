@@ -6,12 +6,19 @@ namespace MiniatureGit
 {
     public class Utils
     {
-        public static async Task<string> WriteObjectAndGetObjectHashAsync<T>(T obj, string path)
+        public static async Task<string> WriteObjectAndGetObjectHashAsync<T>(string path, T obj)
         {
             var objectSerialized = JsonSerializer.Serialize<T>(obj);
             var objectHash = GetSha1(objectSerialized);
             await File.WriteAllTextAsync(Path.Join(path, objectHash), objectSerialized);
             return objectHash;
+        }
+
+        public static async Task<string> WriteObjectAndGetJson<T>(string path, T obj)
+        {
+            var objectSerialized = JsonSerializer.Serialize<T>(obj);
+            await File.WriteAllTextAsync(path, objectSerialized);
+            return objectSerialized;
         }
 
         public static string GetSha1(string intput)

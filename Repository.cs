@@ -9,6 +9,8 @@ namespace MiniatureGit
         public static readonly DirectoryInfo Branches = new DirectoryInfo(Path.Join(MiniatureGit.FullName, "branches"));
         public static readonly string Head = Path.Join(MiniatureGit.FullName, "HEAD");
         public static readonly string Master = Path.Join(Branches.FullName, "master");
+        public static readonly string StagingAreaPath = Path.Join(MiniatureGit.FullName, "StagingArea");
+        public static StagingArea StagingArea;
 
         public static async Task Init()
         {
@@ -18,7 +20,10 @@ namespace MiniatureGit
             Branches.Create();
 
             var initialCommt = new Commit();
-            var initialCommtHash = await Utils.WriteObjectAndGetObjectHashAsync<Commit>(initialCommt, Commits.FullName);
+            var initialCommtHash = await Utils.WriteObjectAndGetObjectHashAsync<Commit>(Commits.FullName, initialCommt);
+
+            StagingArea = new StagingArea();
+            await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
 
             await File.WriteAllTextAsync(Master, initialCommtHash);
             await File.WriteAllTextAsync(Head, Master);
