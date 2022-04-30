@@ -36,56 +36,5 @@ namespace MiniatureGit
             await File.WriteAllTextAsync(Head, initialCommtHash);
             await File.WriteAllTextAsync(CurrentBranch, Master);
         }
-
-        public static async Task<Commit> GetHeadCommit()
-        {
-            var headSha = await File.ReadAllTextAsync(Repository.Head);
-            return await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headSha));
-        }
-
-        public static async Task SetupStagingArea()
-        {
-            StagingArea = await GetStagingArea();
-        }
-
-        private static async Task<StagingArea> GetStagingArea()
-        {
-            return await Utils.ReadObjectAsync<StagingArea>(StagingAreaPath);
-        }
-
-        public static async Task WriteFilesInStagingArea()
-        {
-            foreach (var (file, fileContentSha) in StagingArea.FilesStagedForAddition)
-            {
-                if (!StagingArea.FilesStagedForRemoval.ContainsKey(file))
-                {
-                    var fileBytes = await File.ReadAllBytesAsync(file);
-                    var fileBytesSha = Utils.GetSha1(fileBytes);
-                    await File.WriteAllBytesAsync(Path.Join(Files.FullName, fileBytesSha), fileBytes);
-                }
-            }
-        }
-
-        public static async Task ChangeHeadPointer(string commitId)
-        {
-            await File.WriteAllTextAsync(Head, commitId);
-        }
-
-        public static async Task ChangeCurrentBranchPointer(string commitId)
-        {
-            var currentBranch = await File.ReadAllTextAsync(CurrentBranch);
-            await File.WriteAllTextAsync(currentBranch, commitId);
-        }
-
-        public static async Task SaveStagingArea()
-        {
-            await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
-        }
-
-        public static async Task ClearAndSaveStagingArea()
-        {
-            Repository.StagingArea.ClearStagingArea();
-            await Utils.WriteObjectAndGetJson<StagingArea>(StagingAreaPath, StagingArea);
-        }
     }
 }

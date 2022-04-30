@@ -48,12 +48,12 @@ namespace MiniatureGit
 
             if (hasFileChanged)
             {
-                await Repository.WriteFilesInStagingArea();
-                await Repository.ClearAndSaveStagingArea();
+                await StageRepo.WriteFilesInStagingArea();
+                await StageRepo.ClearAndSaveStagingArea();
                 var commitSha = await Utils.WriteObjectAndGetObjectHashAsync<Commit>(Repository.Commits.FullName, commit);
 
-                await Repository.ChangeCurrentBranchPointer(commitSha);
-                await Repository.ChangeHeadPointer(commitSha);
+                await BranchRepo.ChangeCurrentBranchPointer(commitSha);
+                await ChangeHeadPointer(commitSha);
             }
             else
             {
@@ -69,7 +69,6 @@ namespace MiniatureGit
                 var commitToCheckout = await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, commitIdToCheckout));
                 ClearPWD();
                 
-
                 foreach (var (file, fileSha) in commitToCheckout.FileNameFileShaDictionary)
                 {
                     CreateDirectoriesForFile(file);
@@ -124,6 +123,17 @@ namespace MiniatureGit
                 }
             }
             return false;
+        }
+
+        public static async Task ChangeHeadPointer(string commitId)
+        {
+            await File.WriteAllTextAsync(Repository.Head, commitId);
+        }
+
+        public static async Task<Commit> GetHeadCommit()
+        {
+            var headSha = await File.ReadAllTextAsync(Repository.Head);
+            return await Utils.ReadObjectAsync<Commit>(Path.Join(Repository.Commits.FullName, headSha));
         }
     }
 }

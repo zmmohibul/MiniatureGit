@@ -29,5 +29,17 @@ namespace MiniatureGit
 
             return false;
         }
+
+        public static async Task<string> GetCurrentBranchPointer()
+        {
+            var currentBranch = await File.ReadAllTextAsync(Repository.CurrentBranch);
+            return await File.ReadAllTextAsync(currentBranch);
+        }
+
+        public static async Task ChangeCurrentBranchPointer(string commitId)
+        {
+            var currentBranch = await File.ReadAllTextAsync(Repository.CurrentBranch);
+            await File.WriteAllTextAsync(currentBranch, commitId);
+        }
     }
 }

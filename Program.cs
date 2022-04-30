@@ -21,7 +21,7 @@ namespace MiniatureGit
             
             if (Directory.Exists(Repository.MiniatureGit.FullName))
             {
-                await Repository.SetupStagingArea();
+                await StageRepo.SetupStagingArea();
             }
 
             if (firstArgument.Equals("init"))
