@@ -100,10 +100,10 @@ namespace MiniatureGit
 
         private static void ClearPWD()
         {
-            var directories = Directory.GetDirectories(Repository.PWD.FullName, "*", SearchOption.AllDirectories).Where(d => !d.StartsWith(Path.Join(Repository.PWD.FullName, "MiniatureGit")) && !d.StartsWith(Path.Join(Repository.PWD.FullName, ".")));
+            var directories = Directory.GetFiles(Repository.PWD.FullName, "*", SearchOption.AllDirectories).Where(d => !d.StartsWith(Path.Join(Repository.PWD.FullName, "MiniatureGit")) && !d.StartsWith(Path.Join(Repository.PWD.FullName, ".")));
             foreach(var directory in directories)
             {
-                Directory.Delete(directory);
+                File.Delete(directory);
             }
         }
 
